@@ -1,6 +1,6 @@
 <form action="action_page.php">
   <div class="container">
-    <p>Please fill in this form to create an account, test12345</p>
+    <p>Please fill in this form to create an account, test</p>
     <hr>
      
     <label for="Name"><b>Enter Name</b></label>
