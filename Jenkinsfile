@@ -5,13 +5,12 @@ pipeline {
         maven 'Maven3'
     }
     environment {
-	APP_NAME = "register-app-pipeline-2"
+	    APP_NAME = "register-app-pipeline-2"
         RELEASE = "1.0.0"
         DOCKER_USER = "uzairabid1"
         DOCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-	JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
     }
     stages{
         stage("Cleanup Workspace"){
@@ -89,12 +88,14 @@ pipeline {
           }
        }
 	    
-       stage("Trigger CD Pipeline") {
+        stage("Trigger CD Pipeline") {
             steps {
                 script {
-                    sh "curl -v -k --user uzairabid1:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-3-17-67-232.us-east-2.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
-              }
-           }
-       }	    
+                    withCredentials([string(credentialsId: 'JENKINS_API_TOKEN', variable: 'JENKINS_API_TOKEN')]) {
+                        sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'http://ec2-3-19-220-72.us-east-2.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
+                    }
+                }
+            }
+        }	    
     }
 }
